@@ -13,7 +13,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Users {
+model User {
   userID String @id @unique @default(uuid()) @map("user_id")
   profileID String @unique @default(uuid()) @map("profile_id")
   firstName String @map("first_name")
@@ -21,5 +21,20 @@ model Users {
   email String @unique @map("email_address")
   password String @map("password")
 
+  blogs Blog[] @relation("user_blogs")
+
   @@map("users")
+}
+
+model Blog {
+  blogID String @id @unique @default(uuid()) @map("blog_id")
+  userID String
+  user User @relation("user_blogs" ,fields: [userID], references: [userID])
+  featuredImage String @map("image_url")
+  title String @map("blog_title")
+  synopsis String @map("blog_synopsis")
+  content String @map("blog_content")
+  dateCreated DateTime @default(now()) @map("date_created")
+
+  @@map("blogs")
 }
