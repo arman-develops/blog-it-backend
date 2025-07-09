@@ -5,9 +5,7 @@ import jwt, { Secret } from 'jsonwebtoken'
 import client from "../config/prisma.client";
 import { SendSuccessResponse } from "../utils/sucess.utils";
 import { SendErrorResponse } from "../utils/error.utils";
-import { JsonWebKey } from "crypto";
-
-const jwt_key: Secret = process.env.JWT_SECRET_KEY as Secret
+import { jwt_key } from "../config/jwt.conf";
 
 const registerUser = async (req: Request, res: Response) => {
     try {
@@ -63,7 +61,7 @@ async function loginUser(req: Request, res:Response) {
     if(!match) {
         SendErrorResponse(res, {
             error: "Invalid Credentials"
-        }, "Invalid Credentials. Could not login")
+        }, "Invalid Credentials. Could not login", 200)
         return
     }
 
@@ -74,10 +72,10 @@ async function loginUser(req: Request, res:Response) {
         password: user.password
     }
 
-    const jwt_token = jwt.sign(payload, jwt_key)
+    const jwt_token = jwt.sign(payload, jwt_key, {expiresIn: '1h'})
     
+    console.log(user)
     SendSuccessResponse(res, {
-        login: true,
         jwt_token
     }, "login successful")
 }
