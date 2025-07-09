@@ -22,6 +22,7 @@
   "homepage": "https://github.com/arman-develops/blog-it-backend#readme",
   "dependencies": {
     "@prisma/client": "^6.11.1",
+    "bcryptjs": "^3.0.2",
     "dotenv": "^17.1.0",
     "express": "^5.1.0"
   },
