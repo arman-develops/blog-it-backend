@@ -2,7 +2,6 @@ import jwt from "jsonwebtoken";
 import { NextFunction, Request, Response } from "express";
 import { SendErrorResponse } from "../utils/error.utils";
 import { jwt_key } from "../config/jwt.conf";
-import { JwtPayload } from 'jsonwebtoken';
 
 function verifyToken(req: Request, res: Response, next: NextFunction) {
     const authHeader = req.headers['authorization']

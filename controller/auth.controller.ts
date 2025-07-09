@@ -80,4 +80,8 @@ async function loginUser(req: Request, res:Response) {
     }, "login successful")
 }
 
-export {registerUser, loginUser}
+function logout(_req: Request, _res: Response) {
+    log("user has been logged out")
+}
+
+export {registerUser, loginUser, logout}
