@@ -1,9 +1,13 @@
 import { log } from "console";
 import { Request, Response} from "express";
 import bcrypt from 'bcryptjs'
+import jwt, { Secret } from 'jsonwebtoken'
 import client from "../config/prisma.client";
 import { SendSuccessResponse } from "../utils/sucess.utils";
 import { SendErrorResponse } from "../utils/error.utils";
+import { JsonWebKey } from "crypto";
+
+const jwt_key: Secret = process.env.JWT_SECRET_KEY as Secret
 
 const registerUser = async (req: Request, res: Response) => {
     try {
@@ -62,9 +66,19 @@ async function loginUser(req: Request, res:Response) {
         }, "Invalid Credentials. Could not login")
         return
     }
+
+    const payload = {
+        userID: user.userID,
+        username: user.username,
+        email: user.email,
+        password: user.password
+    }
+
+    const jwt_token = jwt.sign(payload, jwt_key)
     
     SendSuccessResponse(res, {
-        login: true
+        login: true,
+        jwt_token
     }, "login successful")
 }
 
