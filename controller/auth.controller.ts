@@ -39,4 +39,33 @@ const registerUser = async (req: Request, res: Response) => {
     }
 }
 
-export {registerUser}
+async function loginUser(req: Request, res:Response) {
+    const {username, password} = req.body
+
+    const user = await client.user.findUnique({
+        where: {
+            username,
+        }
+    })
+
+    if(!user) {
+        SendErrorResponse(res, {
+            error: "Invalid Credentials"
+        }, "Invalid Credentials. Could not login")
+        return
+    }
+    
+    const match = await bcrypt.compare(password, user.password)
+    if(!match) {
+        SendErrorResponse(res, {
+            error: "Invalid Credentials"
+        }, "Invalid Credentials. Could not login")
+        return
+    }
+    
+    SendSuccessResponse(res, {
+        login: true
+    }, "login successful")
+}
+
+export {registerUser, loginUser}
