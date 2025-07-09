@@ -1,18 +1,22 @@
-import { Express, Request, Response } from 'express'
+import { Express, Request, Response, json } from 'express'
 import express from 'express'
 import dotenv from 'dotenv'
 import { log } from 'console'
 import { SendSuccessResponse } from './utils/sucess.utils'
+import authRouter from './routes/users.route'
 dotenv.config()
 
 const app: Express = express()
 
+app.use(json())
 app.get("/", (_req: Request, res: Response) => {
     SendSuccessResponse(res, {
         path: '/',
         message: "welcome to blog-it API"
     }, "index")
 })
+
+app.use("/api/auth", authRouter)
 
 const PORT = process.env.PORT || 3500
 
