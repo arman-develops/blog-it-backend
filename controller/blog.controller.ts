@@ -3,11 +3,15 @@ import client from "../config/prisma.client";
 import { SendErrorResponse } from "../utils/error.utils";
 import { SendSuccessResponse } from "../utils/sucess.utils";
 
+// interface AuthPayload {
+//     userID: string
+//     email?: string
+// }
+
 async function getAllBlogs(req: Request, res: Response) {
     try {
-        const userID = (req.user as any).userID
-
-        if(!userID) {
+        const userID = req.user?.userID
+        if(userID) {
             SendErrorResponse(res, {authError: true}, "Invalid Token")
         }
 
