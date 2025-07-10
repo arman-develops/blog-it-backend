@@ -117,4 +117,4 @@ async function updateBlog(req:Request, res: Response) {
     }
 }
 
-export {getAllBlogs, createBlog, getSingleBlog}
+export {getAllBlogs, createBlog, getSingleBlog, updateBlog}
