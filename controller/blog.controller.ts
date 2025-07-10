@@ -82,4 +82,39 @@ async function getSingleBlog(req: Request, res: Response) {
     }
 }
 
+async function updateBlog(req:Request, res: Response) {
+    try {
+        const userID = req.user?.userID;
+
+        if (!userID) {
+            return SendErrorResponse(res, { authError: true }, "Unauthorized", 401);
+        }
+
+        const {blogID} = req.params
+        const { title, synopsis, content, featuredImage } = req.body;
+
+        const existingBlog = await client.blog.findUnique({
+            where: { blogID },
+        });
+
+        if (!existingBlog || existingBlog.userID !== userID) {
+            return SendErrorResponse(res, { notFound: true }, "Blog not found or not authorized", 404);
+        }
+
+        const updatedBlog = await client.blog.update({
+            where: {
+                blogID
+            },
+            data: {
+                title,
+                synopsis,
+                content,
+                featuredImage
+            }
+        })
+    } catch(error) {
+        SendErrorResponse(res, {data: {error}}, "error creating blog")
+    }
+}
+
 export {getAllBlogs, createBlog, getSingleBlog}
