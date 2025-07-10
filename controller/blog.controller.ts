@@ -82,4 +82,4 @@ async function getSingleBlog(req: Request, res: Response) {
     }
 }
 
-export {getAllBlogs, createBlog}
+export {getAllBlogs, createBlog, getSingleBlog}
