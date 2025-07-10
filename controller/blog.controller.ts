@@ -146,4 +146,4 @@ async function deleteBlog(req: Request, res: Response) {
     }
 }
 
-export {getAllBlogs, createBlog, getSingleBlog, updateBlog}
+export {getAllBlogs, createBlog, getSingleBlog, updateBlog, deleteBlog}
