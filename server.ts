@@ -5,6 +5,7 @@ import { log } from 'console'
 import { SendSuccessResponse } from './utils/sucess.utils'
 import authRouter from './routes/users.route'
 import blogRouter from './routes/blog.route'
+import { verifyToken } from './middleware/verifyToken'
 dotenv.config()
 
 const app: Express = express()
@@ -18,7 +19,7 @@ app.get("/", (_req: Request, res: Response) => {
 })
 
 app.use("/api/auth", authRouter)
-app.use("/api/blogs", blogRouter)
+app.use("/api/blogs", verifyToken, blogRouter)
 
 const PORT = process.env.PORT || 3500
 

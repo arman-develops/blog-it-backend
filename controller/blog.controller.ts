@@ -60,4 +60,4 @@ async function createBlog(req: Request, res: Response) {
     }
 }
 
-export {getAllBlogs}
+export {getAllBlogs, createBlog}

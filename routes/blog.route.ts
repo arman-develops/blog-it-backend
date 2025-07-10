@@ -1,9 +1,9 @@
 import express from 'express';
-import { getAllBlogs } from '../controller/blog.controller';
-import { verifyToken } from '../middleware/verifyToken';
+import { createBlog, getAllBlogs } from '../controller/blog.controller';
 
 const blogRouter = express.Router()
 
-blogRouter.get("/", verifyToken ,getAllBlogs)
+blogRouter.get("/", getAllBlogs)
+blogRouter.post("/", createBlog)
 
 export default blogRouter
