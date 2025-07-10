@@ -26,8 +26,8 @@ async function getAllBlogs(req: Request, res: Response) {
                 blogs
             }
         }, "Blogs fetched successfully")
-    } catch(err) {
-        SendErrorResponse(res, {data: {error: true}}, "error fetching blogs")
+    } catch(error) {
+        SendErrorResponse(res, {data: {error}}, "error fetching blogs")
     }
 }
 
@@ -56,7 +56,29 @@ async function createBlog(req: Request, res: Response) {
             data: blog,
         }, "Blog created successfully");
     } catch(err) {
-        SendErrorResponse(res, {data: {error: true}}, "error creating blog")
+        SendErrorResponse(res, {data: {error}}, "error creating blog")
+    }
+}
+
+async function getSingleBlog(req: Request, res: Response) {
+    try {
+        const userID = req.user?.userID;
+        if (!userID) {
+            return SendErrorResponse(res, { authError: true }, "Unauthorized", 401);
+        }
+
+        const {blogID} = req.params
+
+        const blog = client.blog.findUnique({
+            where: {
+                blogID
+            }
+        })
+
+        SendSuccessResponse(res, {blog}, "blog fetched successfully")
+
+    } catch (error) {
+        SendErrorResponse(res, {data: {error}}, "error creating blog")
     }
 }
 
