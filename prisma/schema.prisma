@@ -36,6 +36,7 @@ model Blog {
   synopsis String @map("blog_synopsis")
   content String @map("blog_content")
   dateCreated DateTime @default(now()) @map("date_created")
+  isDeleted Boolean @default(false) @map("is_deleted")
 
   @@map("blogs")
 }
