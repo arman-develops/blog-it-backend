@@ -117,4 +117,33 @@ async function updateBlog(req:Request, res: Response) {
     }
 }
 
+async function deleteBlog(req: Request, res: Response) {
+    try {
+        const { blogID } = req.params;
+        const userID = req.user?.userID;
+
+        if (!userID) {
+        return SendErrorResponse(res, { authError: true }, "Unauthorized", 401);
+        }
+
+        // Confirm ownership
+        const blog = await client.blog.findUnique({
+        where: { blogID },
+        });
+
+        if (!blog || blog.userID !== userID) {
+            return SendErrorResponse(res, { notFound: true }, "Blog not found or unauthorized", 404);
+        }
+
+        // Hard delete
+        await client.blog.delete({
+            where: { blogID },
+        });
+
+        SendSuccessResponse(res, { message: "Blog deleted successfully" }, "Blog deleted");
+    } catch (error) {
+        SendErrorResponse(res, { data: { error } }, "Error deleting blog");
+    }
+}
+
 export {getAllBlogs, createBlog, getSingleBlog, updateBlog}
