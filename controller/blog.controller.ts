@@ -31,4 +31,33 @@ async function getAllBlogs(req: Request, res: Response) {
     }
 }
 
+async function createBlog(req: Request, res: Response) {
+    try {
+
+        const userID = req.user?.userID;
+        if (!userID) {
+            return SendErrorResponse(res, { authError: true }, "Unauthorized", 401);
+        }
+
+        const {featuredImage, title, synopsis, content} = req.body
+        const blog = await client.blog.create({
+            data: {
+                featuredImage,
+                title,
+                synopsis,
+                content,
+                user: {
+                    connect: {userID}
+                }
+            }
+        })
+
+        SendSuccessResponse(res, {
+            data: blog,
+        }, "Blog created successfully");
+    } catch(err) {
+        SendErrorResponse(res, {data: {error: true}}, "error creating blog")
+    }
+}
+
 export {getAllBlogs}
