@@ -84,4 +84,8 @@ function logout(_req: Request, _res: Response) {
     log("user has been logged out")
 }
 
-export {registerUser, loginUser, logout}
+function protectedHandler(req: Request, res: Response) {
+    SendSuccessResponse(res, {message: "Protected route reached"}, "this is a protected route")
+}
+
+export {registerUser, loginUser, logout, protectedHandler}
