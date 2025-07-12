@@ -16,11 +16,7 @@ async function getAllBlogs(req: AuthRequest, res: Response) {
             SendErrorResponse(res, {authError: true}, "Invalid Token")
         }
 
-        const blogs = await client.blog.findMany({
-            where: {
-                userID
-            }
-        })
+        const blogs = await client.blog.findMany()
 
         SendSuccessResponse(res, {
             data: {

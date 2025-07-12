@@ -62,3 +62,22 @@ export async function updateUserPassword(req: AuthRequest, res: Response) {
         SendErrorResponse(res, { error: true }, "Failed to update password");
     }
 }
+
+export async function getUserBlogs(req: AuthRequest, res: Response) {
+    const userID = req.user?.userID;
+
+    if (!userID) {
+        return SendErrorResponse(res, { authError: true }, "Unauthorized", 401);
+    }
+
+    try {
+        const blogs = await client.blog.findMany({
+            where: { userID },
+            orderBy: { dateCreated: "desc" },
+        });
+
+        SendSuccessResponse(res, { blogs }, "User blogs fetched successfully");
+    } catch (err) {
+        SendErrorResponse(res, { error: true }, "Failed to fetch blogs");
+    }
+}
