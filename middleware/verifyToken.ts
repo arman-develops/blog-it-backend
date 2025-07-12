@@ -3,7 +3,14 @@ import { NextFunction, Request, Response } from "express";
 import { SendErrorResponse } from "../utils/error.utils";
 import { jwt_key } from "../config/jwt.conf";
 
-function verifyToken(req: Request, res: Response, next: NextFunction) {
+interface AuthRequest extends Request {
+    user?: {
+        userID?: string
+        email?: string
+    } | JwtPayload
+}
+
+function verifyToken(req: AuthRequest, res: Response, next: NextFunction) {
     const authHeader = req.headers['authorization']
     const token = authHeader && authHeader.split(' ')[1]
 
@@ -21,7 +28,7 @@ function verifyToken(req: Request, res: Response, next: NextFunction) {
 
     try {
         const decoded = jwt.verify(token, jwt_key)
-        req.user = decoded // This works because we extended the Request type
+        req.user = decoded as JwtPayload // This works because we extended the Request type
         next();
     } catch (err: any) {
         if (err.name === "TokenExpiredError") {
@@ -48,4 +55,4 @@ function verifyToken(req: Request, res: Response, next: NextFunction) {
     
 }
 
-export {verifyToken}
+export {verifyToken, AuthRequest}

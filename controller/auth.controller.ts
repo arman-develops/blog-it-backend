@@ -6,6 +6,7 @@ import client from "../config/prisma.client";
 import { SendSuccessResponse } from "../utils/sucess.utils";
 import { SendErrorResponse } from "../utils/error.utils";
 import { jwt_key } from "../config/jwt.conf";
+import { AuthRequest } from "../middleware/verifyToken";
 
 const registerUser = async (req: Request, res: Response) => {
     try {
@@ -72,9 +73,9 @@ async function loginUser(req: Request, res:Response) {
         password: user.password
     }
 
-    const jwt_token = jwt.sign(payload, jwt_key, {expiresIn: '1h'})
+    const jwt_token = jwt.sign(payload, jwt_key, {expiresIn: '8h'})
     
-    console.log(user)
+    // console.log(user)
     SendSuccessResponse(res, {
         jwt_token
     }, "login successful")
@@ -84,8 +85,17 @@ function logout(_req: Request, _res: Response) {
     log("user has been logged out")
 }
 
-function protectedHandler(req: Request, res: Response) {
-    SendSuccessResponse(res, {message: "Protected route reached"}, "this is a protected route")
+function protectedHandler(req: AuthRequest, res: Response) {
+    try {
+        const userID = req.user?.userID
+        if(!userID) {
+            SendErrorResponse(res, {authError: true}, "Invalid Token")
+        }
+        SendSuccessResponse(res, {message: "Protected route reached"}, "this is a protected route")
+    } catch (error) {
+        return SendErrorResponse(res, { error }, "Unauthorized", 401);
+    }
+        
 }
 
 export {registerUser, loginUser, logout, protectedHandler}

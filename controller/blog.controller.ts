@@ -2,16 +2,17 @@ import { Request, Response } from "express";
 import client from "../config/prisma.client";
 import { SendErrorResponse } from "../utils/error.utils";
 import { SendSuccessResponse } from "../utils/sucess.utils";
+import { AuthRequest } from "../middleware/verifyToken";
 
 // interface AuthPayload {
 //     userID: string
 //     email?: string
 // }
 
-async function getAllBlogs(req: Request, res: Response) {
+async function getAllBlogs(req: AuthRequest, res: Response) {
     try {
         const userID = req.user?.userID
-        if(userID) {
+        if(!userID) {
             SendErrorResponse(res, {authError: true}, "Invalid Token")
         }
 
@@ -31,7 +32,7 @@ async function getAllBlogs(req: Request, res: Response) {
     }
 }
 
-async function createBlog(req: Request, res: Response) {
+async function createBlog(req: AuthRequest, res: Response) {
     try {
 
         const userID = req.user?.userID;
@@ -40,6 +41,7 @@ async function createBlog(req: Request, res: Response) {
         }
 
         const {featuredImage, title, synopsis, content} = req.body
+
         const blog = await client.blog.create({
             data: {
                 featuredImage,
@@ -55,12 +57,12 @@ async function createBlog(req: Request, res: Response) {
         SendSuccessResponse(res, {
             data: blog,
         }, "Blog created successfully");
-    } catch(err) {
+    } catch(error) {
         SendErrorResponse(res, {data: {error}}, "error creating blog")
     }
 }
 
-async function getSingleBlog(req: Request, res: Response) {
+async function getSingleBlog(req: AuthRequest, res: Response) {
     try {
         const userID = req.user?.userID;
         if (!userID) {
@@ -82,7 +84,7 @@ async function getSingleBlog(req: Request, res: Response) {
     }
 }
 
-async function updateBlog(req:Request, res: Response) {
+async function updateBlog(req:AuthRequest, res: Response) {
     try {
         const userID = req.user?.userID;
 
@@ -112,18 +114,19 @@ async function updateBlog(req:Request, res: Response) {
                 featuredImage
             }
         })
+        SendSuccessResponse(res, {updatedBlog}, "Blog Updated Successfully")
     } catch(error) {
         SendErrorResponse(res, {data: {error}}, "error creating blog")
     }
 }
 
-async function deleteBlog(req: Request, res: Response) {
+async function deleteBlog(req: AuthRequest, res: Response) {
     try {
         const { blogID } = req.params;
         const userID = req.user?.userID;
 
         if (!userID) {
-        return SendErrorResponse(res, { authError: true }, "Unauthorized", 401);
+            return SendErrorResponse(res, { authError: true }, "Unauthorized", 401);
         }
 
         // Confirm ownership
