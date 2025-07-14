@@ -11,7 +11,9 @@ import profileRouter from './routes/profile.route'
 dotenv.config()
 
 const app: Express = express()
-app.use(cors())
+app.use(cors({
+    origin: 'https://blogit-frontend-seven.vercel.app'
+}))
 app.use(json())
 app.get("/", (_req: Request, res: Response) => {
     SendSuccessResponse(res, {
