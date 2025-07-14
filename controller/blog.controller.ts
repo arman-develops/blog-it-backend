@@ -16,15 +16,22 @@ async function getAllBlogs(req: AuthRequest, res: Response) {
             SendErrorResponse(res, {authError: true}, "Invalid Token")
         }
 
-        const blogs = await client.blog.findMany()
-
-        SendSuccessResponse(res, {
-            data: {
-                blogs
+        const blogs = await client.blog.findMany({
+            include: {
+                user: {
+                    select: {
+                        firstName: true,
+                        lastName: true,
+                        username: true,
+                        profileID: true
+                    }
+                }
             }
-        }, "Blogs fetched successfully")
+        })
+
+        SendSuccessResponse(res, {blogs}, "Blogs fetched successfully")
     } catch(error) {
-        SendErrorResponse(res, {data: {error}}, "error fetching blogs")
+        SendErrorResponse(res, {error}, "error fetching blogs")
     }
 }
 
@@ -67,9 +74,19 @@ async function getSingleBlog(req: AuthRequest, res: Response) {
 
         const {blogID} = req.params
 
-        const blog = client.blog.findUnique({
+        const blog = await client.blog.findFirst({
             where: {
                 blogID
+            },
+            include: {
+                user: {
+                    select: {
+                        firstName: true,
+                        lastName: true,
+                        username: true,
+                        profileID: true
+                    }
+                }
             }
         })
 

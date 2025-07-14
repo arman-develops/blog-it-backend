@@ -1,4 +1,4 @@
-import { log } from "console";
+import { log, profile } from "console";
 import { Request, Response} from "express";
 import bcrypt from 'bcryptjs'
 import jwt, { Secret } from 'jsonwebtoken'
@@ -7,6 +7,8 @@ import { SendSuccessResponse } from "../utils/sucess.utils";
 import { SendErrorResponse } from "../utils/error.utils";
 import { jwt_key } from "../config/jwt.conf";
 import { AuthRequest } from "../middleware/verifyToken";
+import { generateKey } from "crypto";
+import { generateToken } from "../utils/generateJWT";
 
 const registerUser = async (req: Request, res: Response) => {
     try {
@@ -30,8 +32,16 @@ const registerUser = async (req: Request, res: Response) => {
                     username
                 }
             })
-            SendSuccessResponse(res, {user}, "Your profile was created success")
-            log("new user created")
+            const payload = {
+                firstName: user.firstName,
+                lastName: user.lastName,
+                profileID: user.profileID,
+                userID: user.userID,
+                email: user.email,
+                username: user.username
+            }
+            const jwt_token = generateToken(payload)
+            SendSuccessResponse(res, {jwt_token}, "Your profile was created successfully")
         })
 
         
@@ -43,13 +53,17 @@ const registerUser = async (req: Request, res: Response) => {
 }
 
 async function loginUser(req: Request, res:Response) {
-    const {username, password} = req.body
+    const {identifier, password} = req.body
 
-    const user = await client.user.findUnique({
-        where: {
-            username,
-        }
+    const user = await client.user.findFirst({
+    where: {
+        OR: [
+            { username: identifier },
+            { email: identifier }
+        ]
+    }
     })
+
 
     if(!user) {
         SendErrorResponse(res, {
@@ -68,12 +82,14 @@ async function loginUser(req: Request, res:Response) {
 
     const payload = {
         userID: user.userID,
+        profileID: user.profileID,
         username: user.username,
         email: user.email,
-        password: user.password
+        firstName: user.firstName,
+        lastName: user.lastName
     }
 
-    const jwt_token = jwt.sign(payload, jwt_key, {expiresIn: '8h'})
+    const jwt_token = generateToken(payload)
     
     // console.log(user)
     SendSuccessResponse(res, {

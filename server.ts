@@ -1,4 +1,5 @@
 import { Express, Request, Response, json } from 'express'
+import cors from 'cors'
 import express from 'express'
 import dotenv from 'dotenv'
 import { log } from 'console'
@@ -10,7 +11,7 @@ import profileRouter from './routes/profile.route'
 dotenv.config()
 
 const app: Express = express()
-
+app.use(cors())
 app.use(json())
 app.get("/", (_req: Request, res: Response) => {
     SendSuccessResponse(res, {
