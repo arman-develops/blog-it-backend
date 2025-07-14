@@ -23,7 +23,7 @@ app.get("/", (_req: Request, res: Response) => {
 })
 
 app.use("/api/auth", authRouter)
-app.use("/api/blogs", verifyToken, blogRouter)
+app.use("/api/blogs", blogRouter)
 app.use("/api/user", verifyToken, profileRouter)
 
 const PORT = process.env.PORT || 3500

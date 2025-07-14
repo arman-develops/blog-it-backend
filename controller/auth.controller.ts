@@ -1,13 +1,10 @@
-import { log, profile } from "console";
+import { log } from "console";
 import { Request, Response} from "express";
 import bcrypt from 'bcryptjs'
-import jwt, { Secret } from 'jsonwebtoken'
 import client from "../config/prisma.client";
 import { SendSuccessResponse } from "../utils/sucess.utils";
 import { SendErrorResponse } from "../utils/error.utils";
-import { jwt_key } from "../config/jwt.conf";
 import { AuthRequest } from "../middleware/verifyToken";
-import { generateKey } from "crypto";
 import { generateToken } from "../utils/generateJWT";
 
 const registerUser = async (req: Request, res: Response) => {

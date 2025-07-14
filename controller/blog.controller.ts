@@ -9,12 +9,12 @@ import { AuthRequest } from "../middleware/verifyToken";
 //     email?: string
 // }
 
-async function getAllBlogs(req: AuthRequest, res: Response) {
+async function getAllBlogs(_req: Request, res: Response) {
     try {
-        const userID = req.user?.userID
-        if(!userID) {
-            SendErrorResponse(res, {authError: true}, "Invalid Token")
-        }
+        // const userID = req.user?.userID
+        // if(!userID) {
+        //     SendErrorResponse(res, {authError: true}, "Invalid Token")
+        // }
 
         const blogs = await client.blog.findMany({
             include: {
